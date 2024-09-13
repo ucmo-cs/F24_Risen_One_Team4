@@ -1,0 +1,66 @@
+service: senior-project-template
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+
+plugins:
+  - serverless-offline
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: users
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        BillingMode: PAY_PER_REQUEST
+    User1:
+      Type: AWS::DynamoDB::TableItem
+      Properties:
+        TableName: ${self:resources.Resources.UsersTable.Properties.TableName}
+        Item:
+          username: "user1"
+          password: "password1"
+    User2:
+      Type: AWS::DynamoDB::TableItem
+      Properties:
+        TableName: ${self:resources.Resources.UsersTable.Properties.TableName}
+        Item:
+          username: "user2"
+          password: "password2"
+    User3:
+      Type: AWS::DynamoDB::TableItem
+      Properties:
+        TableName: ${self:resources.Resources.UsersTable.Properties.TableName}
+        Item:
+          username: "user3"
+          password: "password3"
+    User4:
+      Type: AWS::DynamoDB::TableItem
+      Properties:
+        TableName: ${self:resources.Resources.UsersTable.Properties.TableName}
+        Item:
+          username: "user4"
+          password: "password4"
+
+functions:
+  login:
+    handler: src/handlers/login.handler
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+  
+
