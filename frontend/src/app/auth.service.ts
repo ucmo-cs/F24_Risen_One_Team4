@@ -1,27 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
+  baseURL: string = "https://8ckf8b1bab.execute-api.us-east-1.amazonaws.com/dev/";
+
   constructor(private http: HttpClient,private router: Router) { }
 
   login(username: string, password: string): Observable<boolean> {
-    // Your login logic with Lambda function
-    // Simulating success for demonstration purposes
-    const loginSuccess = true;
-    
-    return new Observable<boolean>((observer) => {
-      if (loginSuccess) {
-        observer.next(true); // Notify subscribers that login was successful
-        observer.complete(); // Complete the observable
-      } else {
-        observer.error('Login failed'); // Notify subscribers that login failed
-      }
-    });
+    const user = JSON.stringify({ username, password });
+
+    return this.http.post<{message : string}>(this.baseURL + 'login', user).pipe(
+        map(response => {
+            console.log("Response:", response.message);
+            if (response.message === 'Login successful') { // checks message sent from lamba against requirment
+                return true;
+            } else {
+                return false;
+            }
+        }),
+        catchError(error => {  // catches error thrown from above
+            console.error('Login error:', error);  // testing statement
+            return new Observable<boolean>(observer => {
+                observer.next(false); // sets to false
+                observer.complete();
+            });
+        })
+    );
   }
 
   logout() {

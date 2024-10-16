@@ -55,6 +55,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { AppRoutingModule } from './app.routes';
 import { LoginComponent } from './login/login.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -69,6 +70,7 @@ import { LoginComponent } from './login/login.component';
     bootstrap: [AppComponent],
     imports: [
         BrowserModule,
+        HttpClientModule,
         LayoutModule,
         FormsModule,
         ReactiveFormsModule,
