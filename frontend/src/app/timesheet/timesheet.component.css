@@ -1,0 +1,79 @@
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  padding: 15px;
+  color: black;
+  border-radius: 8px 8px 0 0;
+  font-weight: bold;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+label[for=project]
+{
+    color: gray;
+}
+
+.filters label {
+  margin-right: 10px;
+}
+
+.timesheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.timesheet-table th,
+.timesheet-table td {
+  border: 1px solid #000;
+  padding: 10px;
+  text-align: center;
+}
+
+thead {
+  background-color: #000;
+  color: #fff;
+}
+
+.actions {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.actions button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #ffa500;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.actions button:hover {
+  background-color: #ffcc00;
+}
+
+.signature {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.signature input {
+  margin-left: 10px;
+  padding: 5px;
+}
