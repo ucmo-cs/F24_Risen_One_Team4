@@ -3,23 +3,48 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-timesheet',
   templateUrl: './timesheet.component.html',
-  styleUrl: './timesheet.component.css'
+  styleUrls: ['./timesheet.component.css']
 })
 export class TimesheetComponent {
   selectedProject: string = 'Project 1';
-  selectedMonth: string = 'February 2024';
+  selectedMonth: string = '2024-10'; // Set to a default YYYY-MM format
 
   projects: string[] = ['Project 1', 'Project 2', 'Project 3'];
 
-  days = Array.from({ length: 28 }, (_, i) => i + 1); // Days of February 2024
+  days: number[] = []; // Holds the days of the selected month
 
-  employees = [
-    { name: 'Jane Doe', hours: Array(28).fill(0)},
-    { name: 'John Doe', hours: Array(28).fill(0)},
-    { name: 'Michael Smith', hours: Array(28).fill(0)},
+  employees: { name: string; hours: number[] }[] = [
+    { name: 'Jane Doe', hours: [] },
+    { name: 'John Doe', hours: [] },
+    { name: 'Michael Smith', hours: [] },
   ];
 
-  isEditing: boolean = false; // Toggle for edit mode
+  isEditing: boolean = false;
+
+  constructor() {
+    this.updateDays(); // Initialize days on component load
+  }
+
+  // Update days based on the selected month and year
+  updateDays(): void {
+    const [year, month] = this.selectedMonth.split('-').map(Number); // Parse year and month
+
+    // Adjust month to be 0-based for Date
+    const adjustedMonth = month - 1; // Adjusting to 0-based index
+    const numDays = new Date(year, adjustedMonth + 1, 0).getDate(); // Get total days in the month
+
+    this.days = Array.from({ length: numDays }, (_, i) => i + 1); // Populate days array
+
+    // Initialize hours for all employees
+    this.employees.forEach(employee => {
+      employee.hours = Array(numDays).fill(0);
+    });
+  }
+
+  // Triggered when the month input changes
+  onMonthChange(): void {
+    this.updateDays(); // Recalculate days when the month changes
+  }
 
   // Temporary storage for original hours during edit mode
   originalHours: number[][] = [];
@@ -51,17 +76,18 @@ export class TimesheetComponent {
   edit() {
     this.isEditing = !this.isEditing;
     if (this.isEditing) {
-    console.log('Edit mode enabled');
-  } else {
-    console.log('Edit mode cancelled');
-  }
+      console.log('Edit mode enabled');
+    } else {
+      console.log('Edit mode cancelled');
+    }
   }
 
-  save() : void {
+  save(): void {
     console.log('Hours saved:', this.employees);
-    if (this.isEditing)
-      console.log("Edit mode disabled")
-    this.isEditing = false;// Turn off edit mode after saving
+    if (this.isEditing) {
+      console.log("Edit mode disabled");
+    }
+    this.isEditing = false; // Turn off edit mode after saving
   }
 
   selectAll(event: FocusEvent): void {
@@ -70,8 +96,7 @@ export class TimesheetComponent {
   }
 
   updateHours(empIndex: number, hourIndex: number, value: number): void {
-  this.employees[empIndex].hours[hourIndex] = value;
-  console.log(`Updated Employee - ${this.employees[empIndex].name} | Hour - ${hourIndex + 1}: ${value}`);
-}
-
+    this.employees[empIndex].hours[hourIndex] = value;
+    console.log(`Updated Employee - ${this.employees[empIndex].name} | Hour - ${hourIndex + 1}: ${value}`);
+  }
 }

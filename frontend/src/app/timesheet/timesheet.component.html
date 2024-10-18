@@ -11,7 +11,7 @@
     </div>
     <div class="filter-group">
     <label for="project">Select Month</label>
-    <input type="month" [(ngModel)]="selectedMonth" />
+    <input type="month" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()" />
     </div>
   </div>
 
