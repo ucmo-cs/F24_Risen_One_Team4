@@ -3,13 +3,16 @@
 
   <div id="body">
   <div class="filters">
+    <div class="filter-group">
     <label for="project">Project Name</label>
     <select id="project" [(ngModel)]="selectedProject">
       <option *ngFor="let project of projects" [value]="project">{{ project }}</option>
     </select>
-
+    </div>
+    <div class="filter-group">
     <label for="project">Select Month</label>
     <input type="month" [(ngModel)]="selectedMonth" />
+    </div>
   </div>
 
   <div class="actions">
@@ -38,7 +41,10 @@
           <input
             type="number"
             [(ngModel)]="employees[empIndex].hours[hourIndex]"
+            (ngModelChange)="updateHours(empIndex, hourIndex, $event)"
             min="0"
+            max="24"
+            (focus)="selectAll($event)"
             class="hour-input"
           />
         </ng-container>
@@ -51,6 +57,7 @@
   </tbody>
   </table>
   </div>
+
 
   <div class="signature">
     <label>Manager Signature</label>

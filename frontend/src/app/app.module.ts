@@ -115,7 +115,6 @@ import {TimesheetComponent} from "./timesheet/timesheet.component";
     MatSortModule,
     MatTableModule,
     FormsModule,
-    ReactiveFormsModule,
     AppRoutingModule,
   ],
     providers: [

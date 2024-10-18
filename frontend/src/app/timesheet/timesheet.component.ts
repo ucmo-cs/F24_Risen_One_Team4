@@ -14,9 +14,9 @@ export class TimesheetComponent {
   days = Array.from({ length: 28 }, (_, i) => i + 1); // Days of February 2024
 
   employees = [
-    { name: 'Jane Doe', hours: Array(28) },
-    { name: 'John Doe', hours: Array(28)},
-    { name: 'Michael Smith', hours: Array(28)},
+    { name: 'Jane Doe', hours: Array(28).fill(0)},
+    { name: 'John Doe', hours: Array(28).fill(0)},
+    { name: 'Michael Smith', hours: Array(28).fill(0)},
   ];
 
   isEditing: boolean = false; // Toggle for edit mode
@@ -59,8 +59,19 @@ export class TimesheetComponent {
 
   save() : void {
     console.log('Hours saved:', this.employees);
-    this.isEditing = false;// Turn off edit mode after saving
     if (this.isEditing)
-      console.log("Edit mode deactivated")
+      console.log("Edit mode disabled")
+    this.isEditing = false;// Turn off edit mode after saving
   }
+
+  selectAll(event: FocusEvent): void {
+    const input = event.target as HTMLInputElement; // Type cast to HTMLInputElement
+    input.select(); // Select the input field's content
+  }
+
+  updateHours(empIndex: number, hourIndex: number, value: number): void {
+  this.employees[empIndex].hours[hourIndex] = value;
+  console.log(`Updated Employee - ${this.employees[empIndex].name} | Hour - ${hourIndex + 1}: ${value}`);
+}
+
 }
