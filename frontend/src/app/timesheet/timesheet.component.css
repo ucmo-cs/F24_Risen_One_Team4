@@ -67,6 +67,22 @@ thead {
   background-color: #ffcc00;
 }
 
+#body{
+  border-style: solid;
+  padding-top: 5px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.hour-input {
+  width: 30px;
+  text-align: center;
+}
+
 .signature {
   display: flex;
   justify-content: space-between;

@@ -1,6 +1,7 @@
 <div class="container">
   <h1 class="header">Monthly Time Sheet</h1>
 
+  <div id="body">
   <div class="filters">
     <label for="project">Project Name</label>
     <select id="project" [(ngModel)]="selectedProject">
@@ -13,7 +14,10 @@
 
   <div class="actions">
     <button (click)="exportToPDF()">Export to PDF</button>
-    <button (click)="edit()">Edit</button>
+    <button (click)="isEditing ? cancelEdit() : startEditing()">
+      {{ isEditing ? 'Cancel Edit' : 'Edit' }}
+    </button>
+
     <button (click)="save()">Save</button>
   </div>
 
@@ -27,13 +31,26 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let employee of employees">
-        <td>{{ employee.name }}</td>
-        <td *ngFor="let hour of employee.hours">{{ hour }}</td>
-        <td>{{ getTotalHours(employee.hours) }}</td>
-      </tr>
-    </tbody>
+    <tr *ngFor="let employee of employees; let empIndex = index">
+      <td>{{ employee.name }}</td>
+      <td *ngFor="let hour of employee.hours; let hourIndex = index">
+        <ng-container *ngIf="isEditing; else viewMode">
+          <input
+            type="number"
+            [(ngModel)]="employees[empIndex].hours[hourIndex]"
+            min="0"
+            class="hour-input"
+          />
+        </ng-container>
+        <ng-template #viewMode>
+          {{ hour }}
+        </ng-template>
+      </td>
+      <td>{{ getTotalHours(employee.hours) }}</td>
+    </tr>
+  </tbody>
   </table>
+  </div>
 
   <div class="signature">
     <label>Manager Signature</label>
