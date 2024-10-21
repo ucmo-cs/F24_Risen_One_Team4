@@ -7,12 +7,11 @@ import { Component } from '@angular/core';
 })
 export class TimesheetComponent {
   selectedProject: string = 'Project 1';
-  selectedMonth: string = '2024-10'; // Set to a default YYYY-MM format
+  selectedMonth: string = '2024-10';
 
   projects: string[] = ['Project 1', 'Project 2', 'Project 3'];
 
-  days: number[] = []; // Holds the days of the selected month
-
+  days: number[] = [];
   employees: { name: string; hours: number[] }[] = [
     { name: 'Jane Doe', hours: [] },
     { name: 'John Doe', hours: [] },
@@ -20,46 +19,37 @@ export class TimesheetComponent {
   ];
 
   isEditing: boolean = false;
+  originalHours: number[][] = [];
 
   constructor() {
-    this.updateDays(); // Initialize days on component load
+    this.updateDays();
   }
 
-  // Update days based on the selected month and year
   updateDays(): void {
-    const [year, month] = this.selectedMonth.split('-').map(Number); // Parse year and month
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+    const adjustedMonth = month - 1;
+    const numDays = new Date(year, adjustedMonth + 1, 0).getDate();
 
-    // Adjust month to be 0-based for Date
-    const adjustedMonth = month - 1; // Adjusting to 0-based index
-    const numDays = new Date(year, adjustedMonth + 1, 0).getDate(); // Get total days in the month
+    this.days = Array.from({ length: numDays }, (_, i) => i + 1);
 
-    this.days = Array.from({ length: numDays }, (_, i) => i + 1); // Populate days array
-
-    // Initialize hours for all employees
     this.employees.forEach(employee => {
       employee.hours = Array(numDays).fill(0);
     });
   }
 
-  // Triggered when the month input changes
   onMonthChange(): void {
-    this.updateDays(); // Recalculate days when the month changes
+    this.updateDays();
   }
 
-  // Temporary storage for original hours during edit mode
-  originalHours: number[][] = [];
-
-  // Enter edit mode and store original hours
   startEditing(): void {
-    this.originalHours = this.employees.map(e => [...e.hours]); // Store a deep copy
+    this.originalHours = this.employees.map(e => [...e.hours]);
     this.isEditing = true;
     console.log('Edit mode enabled');
   }
 
-  // Cancel editing and restore original hours
   cancelEdit(): void {
     this.employees.forEach((employee, index) => {
-      employee.hours = [...this.originalHours[index]]; // Restore original hours
+      employee.hours = [...this.originalHours[index]];
     });
     this.isEditing = false;
     console.log('Edit mode cancelled');
@@ -75,27 +65,24 @@ export class TimesheetComponent {
 
   edit() {
     this.isEditing = !this.isEditing;
-    if (this.isEditing) {
-      console.log('Edit mode enabled');
-    } else {
-      console.log('Edit mode cancelled');
-    }
+    console.log(this.isEditing ? 'Edit mode enabled' : 'Edit mode cancelled');
   }
 
   save(): void {
     console.log('Hours saved:', this.employees);
-    if (this.isEditing) {
-      console.log("Edit mode disabled");
-    }
-    this.isEditing = false; // Turn off edit mode after saving
+    this.isEditing = false;
   }
 
   selectAll(event: FocusEvent): void {
-    const input = event.target as HTMLInputElement; // Type cast to HTMLInputElement
-    input.select(); // Select the input field's content
+    const input = event.target as HTMLInputElement;
+    input.select();
   }
 
   updateHours(empIndex: number, hourIndex: number, value: number): void {
+    if (value < 0) {
+      console.error('Hours cannot be negative');
+      return;
+    }
     this.employees[empIndex].hours[hourIndex] = value;
     console.log(`Updated Employee - ${this.employees[empIndex].name} | Hour - ${hourIndex + 1}: ${value}`);
   }
