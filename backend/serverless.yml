@@ -22,6 +22,18 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
 
+    TimesheetTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: timesheet
+        AttributeDefinitions:
+          - AttributeName: username
+            AttributeType: S
+        KeySchema:
+          - AttributeName: username
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
 functions:
   login:
     handler: src/handlers/login.handler
@@ -31,3 +43,34 @@ functions:
           method: post
           cors: true
 
+  createOrUpdateTimesheet:
+    handler: src/handlers/timesheet.createOrUpdateTimesheet
+    events:
+      - http:
+          path: timesheet
+          method: post
+          cors: true
+
+  getTimesheet:
+    handler: src/handlers/timesheet.getTimesheet
+    events:
+      - http:
+          path: timesheet/{username}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                username: true
+
+  checkUserExists:
+    handler: src/handlers/timesheet.checkUserExists
+    events:
+      - http:
+          path: timesheet/check/{username}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                username: true

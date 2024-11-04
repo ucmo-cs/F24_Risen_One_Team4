@@ -1,102 +1,112 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { DynamoDBService } from '../services/dynamo-db.service';
+
+interface Employee {
+  name: string;
+  hours: number[];
+}
 
 @Component({
   selector: 'app-timesheet',
   templateUrl: './timesheet.component.html',
   styleUrls: ['./timesheet.component.css']
 })
-export class TimesheetComponent {
+export class TimesheetComponent implements OnInit {
   selectedProject: string = 'Project 1';
-  selectedMonth: string = '2024-10'; // Set to a default YYYY-MM format
+  selectedMonth: string = '2024-10';
+  username: string = localStorage.getItem('username') || '';
 
   projects: string[] = ['Project 1', 'Project 2', 'Project 3'];
-
-  days: number[] = []; // Holds the days of the selected month
-
-  employees: { name: string; hours: number[] }[] = [
-    { name: 'Jane Doe', hours: [] },
-    { name: 'John Doe', hours: [] },
-    { name: 'Michael Smith', hours: [] },
-  ];
-
+  days: number[] = [];
+  employees: Employee[] = [
+    { name: 'Employee 1', hours: Array(31).fill(0) },
+    { name: 'Employee 2', hours: Array(31).fill(0) },
+    { name: 'Employee 3', hours: Array(31).fill(0) }
+  ]; // Default employees with 31 days of 0 hours each
   isEditing: boolean = false;
-
-  constructor() {
-    this.updateDays(); // Initialize days on component load
-  }
-
-  // Update days based on the selected month and year
-  updateDays(): void {
-    const [year, month] = this.selectedMonth.split('-').map(Number); // Parse year and month
-
-    // Adjust month to be 0-based for Date
-    const adjustedMonth = month - 1; // Adjusting to 0-based index
-    const numDays = new Date(year, adjustedMonth + 1, 0).getDate(); // Get total days in the month
-
-    this.days = Array.from({ length: numDays }, (_, i) => i + 1); // Populate days array
-
-    // Initialize hours for all employees
-    this.employees.forEach(employee => {
-      employee.hours = Array(numDays).fill(0);
-    });
-  }
-
-  // Triggered when the month input changes
-  onMonthChange(): void {
-    this.updateDays(); // Recalculate days when the month changes
-  }
-
-  // Temporary storage for original hours during edit mode
   originalHours: number[][] = [];
 
-  // Enter edit mode and store original hours
-  startEditing(): void {
-    this.originalHours = this.employees.map(e => [...e.hours]); // Store a deep copy
-    this.isEditing = true;
-    console.log('Edit mode enabled');
+  constructor(private timesheetService: DynamoDBService) {}
+
+  ngOnInit(): void {
+    this.updateDays();
+    this.loadTimesheet();
   }
 
-  // Cancel editing and restore original hours
+  updateDays(): void {
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+    const numDays = new Date(year, month, 0).getDate();
+    this.days = Array.from({ length: numDays }, (_, i) => i + 1);
+
+    // Adjust each employee's hours array to match the number of days
+    this.employees = this.employees.map(employee => ({
+      ...employee,
+      hours: [...employee.hours.slice(0, numDays), ...Array(numDays - employee.hours.length).fill(0)]
+    }));
+  }
+
+  onMonthChange(): void {
+    this.updateDays();
+    this.loadTimesheet();
+  }
+
+  loadTimesheet(): void {
+    this.timesheetService.getTimesheet(this.username)
+      .subscribe(
+        data => {
+          if (data) {
+            this.selectedProject = data.projectName;
+            this.selectedMonth = data.selectMonth;
+            this.updateDays();
+
+            this.employees = data.employeesList.map(employee => ({
+              ...employee,
+              hours: [...employee.hours.slice(0, this.days.length), ...Array(this.days.length - employee.hours.length).fill(0)]
+            }));
+          }
+        },
+        error => {
+          console.error('Error loading timesheet', error);
+        }
+      );
+  }
+
+  startEditing(): void {
+    this.originalHours = this.employees.map(e => [...e.hours]);
+    this.isEditing = true;
+  }
+
   cancelEdit(): void {
-    this.employees.forEach((employee, index) => {
-      employee.hours = [...this.originalHours[index]]; // Restore original hours
-    });
+    this.employees.forEach((employee, index) => employee.hours = [...this.originalHours[index]]);
     this.isEditing = false;
-    console.log('Edit mode cancelled');
   }
 
   getTotalHours(hours: number[]): number {
     return hours.reduce((a, b) => a + b, 0);
   }
 
-  exportToPDF() {
-    console.log('Exporting to PDF');
-  }
-
-  edit() {
-    this.isEditing = !this.isEditing;
-    if (this.isEditing) {
-      console.log('Edit mode enabled');
-    } else {
-      console.log('Edit mode cancelled');
-    }
-  }
-
   save(): void {
-    console.log('Hours saved:', this.employees);
-    if (this.isEditing) {
-      console.log("Edit mode disabled");
-    }
-    this.isEditing = false; // Turn off edit mode after saving
-  }
-
-  selectAll(event: FocusEvent): void {
-    const input = event.target as HTMLInputElement; // Type cast to HTMLInputElement
-    input.select(); // Select the input field's content
+    const timesheetData = {
+      username: this.username,
+      projectName: this.selectedProject,
+      selectMonth: this.selectedMonth,
+      employeesList: this.employees,
+      managerSignature: "",
+      date: ""
+    };
+    
+    this.timesheetService.upsertTimesheet(timesheetData).subscribe(
+      () => {
+        console.log('Timesheet saved successfully');
+        this.isEditing = false;
+      },
+      error => {
+        console.error('Error saving timesheet', error);
+      }
+    );
   }
 
   updateHours(empIndex: number, hourIndex: number, value: number): void {
     this.employees[empIndex].hours[hourIndex] = value;
-    console.log(`Updated Employee - ${this.employees[empIndex].name} | Hour - ${hourIndex + 1}: ${value}`);
   }
 }

@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
 })
 
 export class AuthService {
-  baseURL: string = "https://8ckf8b1bab.execute-api.us-east-1.amazonaws.com/dev/";
+  // baseURL: string = "https://1ytxch96rd.execute-api.us-east-1.amazonaws.com/dev/";
+  baseURL: string = "http://localhost:3000/dev/";
 
   constructor(private http: HttpClient,private router: Router) { }
 
@@ -19,8 +20,10 @@ export class AuthService {
         map(response => {
             console.log("Response:", response.message);
             if (response.message === 'Login successful') { // checks message sent from lamba against requirment
+                localStorage.setItem("username",username)
                 return true;
             } else {
+                localStorage.clear()
                 return false;
             }
         }),
@@ -40,6 +43,7 @@ export class AuthService {
     const logoutSuccess = true;
 
     if (logoutSuccess) {
+      localStorage.clear()
       // Redirect to login page or any other desired page
       this.router.navigate(['/login']);
     } else {
