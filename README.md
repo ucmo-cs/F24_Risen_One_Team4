@@ -155,9 +155,7 @@ After deploying the frontend to S3 and setting up the backend on AWS, you can ac
 
 Following these steps will help you set up and deploy a serverless Angular application with a backend hosted on AWS. If you encounter any issues, refer to the additional resources provided for detailed documentation.
 
-
-
-
+http://frontendbucket444.s3-website-us-east-1.amazonaws.com user:tester pwd:aws
 
 
 
