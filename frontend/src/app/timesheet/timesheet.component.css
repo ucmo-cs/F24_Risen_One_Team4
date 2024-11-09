@@ -1,5 +1,5 @@
 .container {
-  max-width: 1200px;
+  max-width: 1270px;
   margin: auto;
   padding: 20px;
   background: #fff;
@@ -54,7 +54,7 @@ select[for=project]
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
-  table-layout: fixed; /* This fixes table going out of border */
+  table-layout: auto; /* This fixes table going out of border */
 }
 
 .timesheet-table th{

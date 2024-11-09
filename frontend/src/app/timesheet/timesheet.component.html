@@ -1,6 +1,7 @@
 <div class="container">
   <h1 class="header">Monthly Time Sheet</h1>
 
+  <div #timesheetContent>
   <div id="body">
   <div class="filters">
     <div class="filter-group">
@@ -24,7 +25,7 @@
     <button (click)="save()">Save</button>
   </div>
 
-  <h4>{{ selectedMonth }}</h4>
+      <h4>{{ selectedMonth }}</h4>
   <table class="timesheet-table">
     <thead>
       <tr>
@@ -56,6 +57,7 @@
     </tr>
   </tbody>
   </table>
+  </div>
   </div>
 
 

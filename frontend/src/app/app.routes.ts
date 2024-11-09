@@ -5,9 +5,9 @@ import { NgModule } from '@angular/core';
 import {TimesheetComponent} from "./timesheet/timesheet.component";
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent },
+  // { path: 'login', component: LoginComponent },
+  // { path: '', redirectTo: '/login', pathMatch: 'full' },
+  // { path: 'home', component: HomeComponent },
   { path: 'timesheet', component: TimesheetComponent },
   ];
 
