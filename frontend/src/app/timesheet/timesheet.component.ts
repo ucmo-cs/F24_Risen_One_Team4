@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
 })
 export class TimesheetComponent {
   selectedProject: string = 'Project 1';
-  selectedMonth: string = '2024-11';
+  selectedMonth: string = new Date().toISOString().slice(0, 7);
 
   projects: string[] = ['Project 1', 'Project 2', 'Project 3'];
 
@@ -71,18 +71,26 @@ export class TimesheetComponent {
     const element = this.timesheetContent.nativeElement;
     html2canvas(element).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 190;
+      const pdf = new jsPDF('landscape', 'mm', 'a4');
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth - 2 * 10;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       const formattedMonth = this.formatMonthYear(this.selectedMonth);
 
       pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-      pdf.save(`${this.selectedProject}_${this.selectedMonth}_timesheet.pdf`);
+      pdf.save(`${this.selectedProject}_${this.formattedSelectedMonth}_timesheet.pdf`);
     });
   }
 
+  get formattedSelectedMonth(): string {
+    return this.formatMonthYear(this.selectedMonth);
+  }
+
   formatMonthYear(dateStr: string): string {
-    const date = new Date(`${dateStr}-01`);
+    const [year, month] = dateStr.split('-').map(Number);
+  const date = new Date(year, month - 1);
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   }
 

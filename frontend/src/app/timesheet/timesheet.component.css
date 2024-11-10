@@ -55,6 +55,7 @@ select[for=project]
   border-collapse: collapse;
   margin: 20px 0;
   table-layout: auto; /* This fixes table going out of border */
+  font-size: 14px;
 }
 
 .timesheet-table th{

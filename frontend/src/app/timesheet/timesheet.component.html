@@ -25,7 +25,7 @@
     <button (click)="save()">Save</button>
   </div>
 
-      <h4>{{ selectedMonth }}</h4>
+      <h4>{{ formattedSelectedMonth }}</h4>
   <table class="timesheet-table">
     <thead>
       <tr>
@@ -58,13 +58,14 @@
   </tbody>
   </table>
   </div>
-  </div>
-
-
-  <div class="signature">
+    <div class="signature">
     <label>Manager Signature</label>
     <input type="text" placeholder="Signature" />
     <label>Date</label>
     <input type="date" />
   </div>
+  </div>
+
+
+
 </div>
