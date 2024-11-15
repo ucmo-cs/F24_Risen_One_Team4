@@ -106,7 +106,7 @@ input::-webkit-inner-spin-button {
 }
 
 .hour-input {
-  width: 100%;
+  width: 20px;
   text-align: center;
   box-sizing: border-box; /* Prevents input from exceeding container */
 }

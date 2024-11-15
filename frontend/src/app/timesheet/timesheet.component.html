@@ -37,11 +37,11 @@
     <tbody>
     <tr *ngFor="let employee of employees; let empIndex = index">
       <td>{{ employee.name }}</td>
-      <td *ngFor="let hour of employee.hours; let hourIndex = index">
+      <td *ngFor="let hour of employee.hours; let hourIndex = index;trackBy:trackByMethod">
         <ng-container *ngIf="isEditing; else viewMode">
           <input
             type="number"
-            [(ngModel)]="employees[empIndex].hours[hourIndex]"
+            [ngModel]="employees[empIndex].hours[hourIndex]"
             (ngModelChange)="updateHours(empIndex, hourIndex, $event)"
             min="0"
             max="24"
@@ -65,7 +65,4 @@
     <input type="date" />
   </div>
   </div>
-
-
-
 </div>

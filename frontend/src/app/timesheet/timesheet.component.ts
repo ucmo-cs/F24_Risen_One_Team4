@@ -23,7 +23,6 @@ export class TimesheetComponent {
 
   @ViewChild('timesheetContent', { static: false }) timesheetContent!: ElementRef;
 
-
   isEditing: boolean = false;
 
   constructor() {
@@ -51,7 +50,7 @@ export class TimesheetComponent {
   startEditing(): void {
     this.originalHours = this.employees.map(e => [...e.hours]);
     this.isEditing = true;
-    console.log('Edit mode enabled');
+    // console.log('Edit mode enabled');
   }
 
   cancelEdit(): void {
@@ -59,7 +58,7 @@ export class TimesheetComponent {
       employee.hours = [...this.originalHours[index]];
     });
     this.isEditing = false;
-    console.log('Edit mode cancelled');
+    // console.log('Edit mode cancelled');
   }
 
   getTotalHours(hours: number[]): number {
@@ -94,20 +93,11 @@ export class TimesheetComponent {
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   }
 
-  edit() {
-    this.isEditing = !this.isEditing;
-    if (this.isEditing) {
-      console.log('Edit mode enabled');
-    } else {
-      console.log('Edit mode cancelled');
-    }
-  }
-
   save(): void {
-    console.log('Hours saved:', this.employees);
-    if (this.isEditing) {
-      console.log("Edit mode disabled");
-    }
+    // console.log('Hours saved:', this.employees);
+    // if (this.isEditing) {
+    //   console.log("Edit mode disabled");
+    // }
     this.isEditing = false;
   }
 
@@ -117,7 +107,19 @@ export class TimesheetComponent {
   }
 
   updateHours(empIndex: number, hourIndex: number, value: number): void {
-    this.employees[empIndex].hours[hourIndex] = value;
-    console.log(`Updated Employee - ${this.employees[empIndex].name} | Hour - ${hourIndex + 1}: ${value}`);
+    // console.log("employee:", empIndex);
+    // console.log("hour:", hourIndex + 1);
+    this.employees[empIndex].hours[hourIndex] = Math.max(0, Math.min(value, 24));
+
+    // this.employees.forEach((employee, empIndex) => {
+    //   employee.hours.forEach((hour, hourIndex) => {
+    //   console.log(`Employee: ${employee.name} | Day: ${hourIndex + 1} | Hours: ${hour}`);
+    //   });
+    // });
   }
+
+  trackByMethod(index:number, el:any): number {
+    return el.id;
+  }
+
 }
