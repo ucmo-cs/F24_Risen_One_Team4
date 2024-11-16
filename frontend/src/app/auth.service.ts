@@ -8,13 +8,13 @@ import { Router } from '@angular/router';
 })
 
 export class AuthService {
-  // baseURL: string = "https://1ytxch96rd.execute-api.us-east-1.amazonaws.com/dev/";
-  baseURL: string = "http://localhost:3000/dev/";
+  baseURL: string = "https://jp7j5ikmw9.execute-api.us-east-1.amazonaws.com/dev/";
+  // baseURL: string = "http://localhost:3000/dev/";
 
   constructor(private http: HttpClient,private router: Router) { }
 
   login(username: string, password: string): Observable<boolean> {
-    const user = JSON.stringify({ username, password });
+    const user = JSON.stringify({ username:username, password:password });
 
     return this.http.post<{message : string}>(this.baseURL + 'login', user).pipe(
         map(response => {

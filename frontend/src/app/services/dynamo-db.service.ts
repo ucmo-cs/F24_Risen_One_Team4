@@ -33,8 +33,8 @@ interface TimesheetResponse {
   providedIn: 'root'
 })
 export class DynamoDBService {
-  // apiUrl: string = "https://1ytxch96rd.execute-api.us-east-1.amazonaws.com/dev/";
-  apiUrl: string = "http://localhost:3000/dev";
+  apiUrl: string = "https://jp7j5ikmw9.execute-api.us-east-1.amazonaws.com/dev/login";
+  // apiUrl: string = "http://localhost:3000/dev";
   constructor(private http: HttpClient) {}
 
   getTimesheet(username: string): Observable<Timesheet> {
