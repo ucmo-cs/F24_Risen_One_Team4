@@ -4,6 +4,14 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - Fn::GetAtt:
+          - TimesheetTable
+          - Arn
 
 plugins:
   - serverless-offline
@@ -47,7 +55,7 @@ resources:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
         Policies:
-          - PolicyName: usersDynamoPolicy
+          - PolicyName: timesheetDynamoPolicy
             PolicyDocument:
               Version: '2012-10-17'
               Statement:
@@ -79,10 +87,10 @@ functions:
           path: timesheet
           method: post
           cors: true
-          role: dynamoUser
 
   getTimesheet:
     handler: src/handlers/timesheet.getTimesheet
+    role: dynamoUser
     events:
       - http:
           path: timesheet/{username}
@@ -104,5 +112,3 @@ functions:
             parameters:
               paths:
                 username: true
-
-  
