@@ -1,68 +1,48 @@
-<div class="container">
-  <h1 class="header">Monthly Time Sheet</h1>
-
-  <div #timesheetContent>
-    <div id="body">
-      <div class="filters">
-        <div class="filter-group">
-          <label for="project">Project Name</label>
-          <select id="project" [(ngModel)]="selectedProjectId" (change)="filterEmployees()">
-            <option *ngFor="let project of projectsData" [value]="project.id">{{ project.name }}</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="project">Select Month</label>
-          <input type="month" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()" />
-        </div>
-      </div>
-
-      <div class="actions">
-        <button (click)="exportToPDF()">Export to PDF</button>
-        <button (click)="isEditing ? cancelEdit() : startEditing()">
-          {{ isEditing ? 'Cancel Edit' : 'Edit' }}
-        </button>
-        <button (click)="save()">Save</button>
-      </div>
-
-      <h4>{{ formattedSelectedMonth }}</h4>
-      <table class="timesheet-table">
-        <thead>
-        <tr>
-          <th>Employees</th>
-          <th *ngFor="let day of days">{{ day }}</th>
-          <th>Total</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let employee of employees; let empIndex = index">
-          <td>{{ employee.name }}</td>
-          <td *ngFor="let hour of employee.hours; let hourIndex = index; trackBy: trackByMethod">
-            <ng-container *ngIf="isEditing; else viewMode">
-              <input
-                      type="number"
-                      [ngModel]="employees[empIndex].hours[hourIndex]"
-                      (ngModelChange)="updateHours(empIndex, hourIndex, $event)"
-                      min="0"
-                      max="24"
-                      (focus)="selectAll($event)"
-                      class="hour-input"
-              />
-            </ng-container>
-            <ng-template #viewMode>
-              {{ hour }}
-            </ng-template>
-          </td>
-          <td>{{ getTotalHours(employee.hours) }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="signature">
-      <label>Manager Signature</label>
-      <input type="text" placeholder="Signature" />
-      <label>Date</label>
-      <input type="date" />
-    </div>
+<div class="filters">
+  <div class="filter-group">
+    <label for="project">Project Name</label>
+    <select id="project" [(ngModel)]="selectedProjectId" (change)="filterEmployees()">
+      <option *ngFor="let project of projectsData" [value]="project.id">{{ project.name }}</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label for="month">Select Month</label>
+    <input type="month" id="month" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()" />
   </div>
 </div>
+
+<h4>{{ formattedSelectedMonth }}</h4>
+<table class="timesheet-table" *ngIf="employees.length > 0; else noData">
+  <thead>
+    <tr>
+      <th>Employees</th>
+      <th *ngFor="let day of days">{{ day }}</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let employee of employees; let empIndex = index">
+      <td>{{ employee.name }}</td>
+      <td *ngFor="let hour of employee.hours; let hourIndex = index">
+        <ng-container *ngIf="isEditing; else viewMode">
+          <input
+            type="number"
+            [ngModel]="employees[empIndex].hours[hourIndex]"
+            (ngModelChange)="updateHours(empIndex, hourIndex, $event)"
+            min="0"
+            max="24"
+            class="hour-input"
+          />
+        </ng-container>
+        <ng-template #viewMode>
+          {{ hour }}
+        </ng-template>
+      </td>
+      <td>{{ getTotalHours(employee.hours) }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noData>
+  <p>No employees available for this project.</p>
+</ng-template>
