@@ -1,6 +1,8 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { HttpClient } from '@angular/common/http';
+import { DynamoDBService } from '../services/dynamo-db.service';
 
 @Component({
   selector: 'app-timesheet',
@@ -8,10 +10,10 @@ import html2canvas from 'html2canvas';
   styleUrls: ['./timesheet.component.css']
 })
 export class TimesheetComponent {
-  selectedProject: string = 'Project 1';
+  selectedProject: string = 'Project1';
   selectedMonth: string = new Date().toISOString().slice(0, 7);
 
-  projects: string[] = ['Project 1', 'Project 2', 'Project 3'];
+  projects: string[] = ['Project1', 'Project2', 'Project3'];
 
   days: number[] = [];
 
@@ -25,8 +27,38 @@ export class TimesheetComponent {
 
   isEditing: boolean = false;
 
-  constructor() {
+  timesheets: any[] = [];  // To store the fetched timesheets
+  selectedTimesheet: any;  // To store the selected timesheet from the dropdown
+
+  constructor(private dbService: DynamoDBService) {  // Inject DynamoDBService
     this.updateDays();
+  }
+
+  ngOnInit(): void {
+    this.fetchTimesheets('new'); // Replace 'exampleUsername' with actual username
+  }
+
+  // Fetch timesheets from the service
+  fetchTimesheets(username: string): void {
+  this.dbService.getTimesheet(username).subscribe(
+    (response) => {
+      console.log('Timesheet Response:', response); // Log the response to verify the data
+      if (response) {
+        this.timesheets = Array.isArray(response) ? response : [response];  // If the response is not an array, wrap it in an array
+        console.log('Timesheets Array:', this.timesheets); // Log the timesheets after they're assigned
+      }
+    },
+    (error) => {
+      console.error('Error fetching timesheets:', error); // Log any errors
+    }
+  );
+}
+
+
+  // Handle timesheet selection
+  onTimesheetSelect(): void {
+    console.log('Selected Timesheet:', this.selectedTimesheet);
+    // You can add logic here to update the timesheet data based on the selected timesheet
   }
 
   updateDays(): void {

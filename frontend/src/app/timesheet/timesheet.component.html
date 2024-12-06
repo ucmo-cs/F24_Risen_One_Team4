@@ -5,13 +5,18 @@
   <div id="body">
   <div class="filters">
     <div class="filter-group">
-    <label for="project">Project Name</label>
-    <select id="project" [(ngModel)]="selectedProject">
-      <option *ngFor="let project of projects" [value]="project">{{ project }}</option>
-    </select>
+    <label for="projectDropdown">Project Name</label>
+
+    <!-- Timesheet Dropdown -->
+  <select id="projectDropdown" [(ngModel)]="selectedTimesheet" (change)="onTimesheetSelect()">
+    <option *ngFor="let timesheet of timesheets" [value]="timesheet.username">
+      {{ timesheet.username }}
+    </option>
+  </select>
+
     </div>
     <div class="filter-group">
-    <label for="project">Select Month</label>
+    <label for="projectDropdown">Select Month</label>
     <input type="month" [(ngModel)]="selectedMonth" (ngModelChange)="onMonthChange()" />
     </div>
   </div>
